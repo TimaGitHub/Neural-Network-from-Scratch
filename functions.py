@@ -25,9 +25,15 @@ def derivative_tanh(x):
     return 1 - tanh(x)
 
 def cross_entropy_loss(predicted, true):
+
+    true = np.int_(np.arange(0, 10) == true)
+
     return -1 * np.sum(true * np.log(predicted), axis=1)
 
 def cross_entropy_loss_derivative(predicted, true):
+
+    true = np.int_(np.arange(0, 10) == true)
+
     return predicted - true
 
 def softmax(z):

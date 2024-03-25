@@ -2,7 +2,9 @@ import numpy as np
 
 
 def gradient_descent(self, output, y_train):
+
     if self == None:
+
         raise Exception("No object in gradient descent")
     else:
         changes_w = []
@@ -10,7 +12,7 @@ def gradient_descent(self, output, y_train):
 
         art = self.loss_derivative(output, y_train)
 
-        for i in range(self.n_layers + 1):
+        for i in range(len(self.neurons) + 1):
             if i == 0:
                 art = (art @ (self.weights[-1 - i]).T)
             else:
@@ -35,7 +37,7 @@ def stochastic_gradient_descent(self, output, y_train):
 
         art = self.loss_derivative(output, y_train)[k].reshape(1, -1)
 
-        for i in range(self.n_layers + 1):
+        for i in range(len(self.neurons) + 1):
 
             if i == 0:
                 art = (art @ (self.weights[-1 - i]).T)
@@ -64,7 +66,7 @@ def stochastic_average_gradient_descent(self, output, y_train):
 
         art = self.loss_derivative(output, y_train)[k]
 
-        for i in range(self.n_layers + 1):
+        for i in range(len(self.neurons) + 1):
 
             if i == 0:
                 art = (art @ (self.weights[-1 - i]).T)

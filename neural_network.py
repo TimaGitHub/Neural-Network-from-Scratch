@@ -3,16 +3,20 @@ import metrics
 import gradient_steps
 from tqdm.auto import tqdm
 import numpy as np
+import matplotlib.pyplot as plt
+from IPython.display import clear_output
 
 class NeuralNetwork():
 
-    def __init__(self, n_layers, n_neurons, purpose='classification'):
+    def __init__(self, n_inputs, neurons, n_outputs, purpose='classification', batches=False):
 
-        self.n_layers = n_layers
+        self.n_inputs = n_inputs
 
-        self.n_neurons = n_neurons
+        self.neurons = neurons
 
         self.purpose = purpose
+
+        self.n_outputs = n_outputs
 
         self.trained = False
 
@@ -64,9 +68,10 @@ class NeuralNetwork():
         else:
             raise Exception("gradient descent method is not specified or unknown")
 
-    def cosmetic(self, progress_bar=False, loss_display=False, iterations=0):
+    def cosmetic(self, progress_bar=False, loss_display=False, loss_graphic = False, iterations=0):
 
         self.loss_display = loss_display
+        self.loss_graphic = loss_graphic
 
         self.iterations = iterations
 
@@ -78,71 +83,127 @@ class NeuralNetwork():
         else:
             self.tqdm = tqdm
 
-    def train(self, x_train, y_train, n_epochs):
+    def train(self, batches, test_batches, n_epochs):
         try:
-            self.n_epochs = n_epochs
-
             if self.purpose == 'classification':
 
                 # this block of code needs to find out if model is already trained before
                 if not self.trained:
                     # if not trained, let's initialize new params of the model
-                    self.n_inputs = x_train.shape[1] # define the number of features
-                    self.n_outputs = y_train.shape[1] #d efine the number of classes
+                    for index, neuron in enumerate(self.neurons):
 
-                    self.weights = [np.random.uniform(- 0.5, 0.5, size=(self.n_inputs, self.n_neurons))]
-                    self.biases = [np.random.uniform(- 0.5, 0.5, size=(1, self.n_neurons))]
+                        if index == 0:
 
-                    for i in range(self.n_layers - 1):
+                            self.weights = [np.random.uniform(- 0.5, 0.5, size=(self.n_inputs, neuron))]
 
-                        self.weights.append(np.random.uniform(-0.5, 0.5, size=(self.n_neurons, self.n_neurons)))
-                        self.biases.append(np.random.uniform(-0.5, 0.5, size=(1, self.n_neurons)))
+                            self.biases = [np.random.uniform(- 0.5, 0.5, size=(1, neuron))]
 
-                    self.weights.append(np.random.uniform(-0.5, 0.5, size=(self.n_neurons, self.n_outputs)))
+
+                        else:
+
+                            self.weights.append(np.random.uniform(-0.5, 0.5, size=(last, neuron)))
+
+                            self.biases.append(np.random.uniform(-0.5, 0.5, size=(1, neuron)))
+
+                        last = neuron + 0
+
+                    self.weights.append(np.random.uniform(-0.5, 0.5, size=(last, self.n_outputs)))
 
                     self.biases.append(np.random.uniform(-0.5, 0.5, size=(1, self.n_outputs)))
 
-                    # identity matrix at the end needs for correct chain rule algorithm
+                    # add identity matrix for correct chain rule algorithm
+
                     self.weights.append(np.eye(self.n_outputs, self.n_outputs))
 
-                for epoch in tqdm(range(self.n_epochs + 1), position=0, leave=True):
+                    ## it is for accelerated momentum
+                    self.last_grad_w = [0] * len(self.weights)
+                    self.last_grad_b = [0] * len(self.biases)
+                    ##
 
-                    norm = x_train.shape[0]
+                    self.trained = True
 
-                    # collect outputs from different layers for back propagation
-                    self.hidden_outputs_no_activation = []
-                    self.hidden_outputs_activation = []
+                for epoch in tqdm(range(n_epochs), position=0, leave=True):
 
-                    self.hidden_outputs_activation.append(x_train)
-                    self.hidden_outputs_no_activation.append(x_train)
+                    for index, batch in enumerate(batches):
 
-                    result = x_train @ self.weights[0] + self.biases[0]
+                        x_train, y_train = batch
 
-                    self.hidden_outputs_no_activation.append(result)
-                    self.hidden_outputs_activation.append(self.activation_func(result))
+                        norm = x_train.shape[0]
 
-                    for i in range(self.n_layers):
+                        # collect outputs from different layers for back propagation
+                        self.hidden_outputs_no_activation = []
+                        self.hidden_outputs_activation = []
 
-                        result = self.hidden_outputs_activation[-1] @ self.weights[i + 1] + self.biases[i + 1]
+                        self.hidden_outputs_activation.append(x_train)
+                        self.hidden_outputs_no_activation.append(x_train)
+
+                        result = x_train @ self.weights[0] + self.biases[0]
 
                         self.hidden_outputs_no_activation.append(result)
-
                         self.hidden_outputs_activation.append(self.activation_func(result))
 
-                    # remove last result to apply softmax function
-                    pop_garbage = self.hidden_outputs_activation.pop()
+                        for i in range(len(self.neurons)):
 
-                    output = functions.softmax(result)
+                            result = self.hidden_outputs_activation[-1] @ self.weights[i + 1] + self.biases[i + 1]
 
-                    self.hidden_outputs_activation.append(output)
+                            self.hidden_outputs_no_activation.append(result)
 
-                    loss = self.loss_func(output, y_train)
+                            self.hidden_outputs_activation.append(self.activation_func(result))
 
-                    self.gradient_method(self, output, y_train)
+                        # remove last result to apply softmax function
+                        pop_garbage = self.hidden_outputs_activation.pop()
 
-                    if self.loss_display and epoch % int(self.n_epochs / self.iterations) == 0:
-                        print('For epoch number: {}, prediction accuracy is: {}'.format(epoch, round(
-                            metrics.accuracy(output, y_train), 4)))
+                        output = functions.softmax(result)
+
+                        self.hidden_outputs_activation.append(output)
+
+                        loss = self.loss_func(output, y_train)
+
+                        self.gradient_method(self, output, y_train)
+
+                        #if self.loss_display and epoch % int(self.n_epochs / self.iterations) == 0:
+                        if self.loss_display and index % 100 == 0:
+                            val_acc = []
+                            for batch in test_batches:
+
+                                x_train, y_train = batch
+                                val_acc.append(metrics.accuracy(self.predict(x_train), np.int_(np.arange(0, 10) == y_train)))
+
+                            print('For epoch number: {}, validation accuracy is: {}, loss is {}'.format(epoch, round(
+                                np.mean(val_acc), 4), round(np.mean(loss), 4)))
+
+                            # print('For iter number: {}, validation accuracy is: {}'.format(index, round(
+                            #      np.mean(val_acc), 4)))
+                            self.history_losses.append(np.mean(loss))
+                            self.history_scores.append(np.mean(val_acc))
+                            if self.loss_graphic:
+
+                                self.history_losses.append(np.mean(loss))
+                                self.history_scores.append(np.mean(val_acc))
+
+                                fig, ax1 = plt.subplots(figsize=(9, 8))
+
+                                clear_output(True)
+
+                                ax1.set_xlabel('iters')
+
+                                ax1.set_ylabel('Loss', color='blue')
+
+                                t = np.arange(len(self.history_losses))
+
+                                ax1.plot(t, self.history_losses)
+
+                                ax2 = ax1.twinx()
+
+                                ax2.set_ylabel('Score', color='red')
+
+                                ax2.plot(t, self.history_scores, color='red')
+
+                                plt.locator_params(axis='y', nbins=40)
+
+                                fig.tight_layout()
+
+                                plt.show()
 
 
 
@@ -167,7 +228,7 @@ class NeuralNetwork():
 
         self.hidden_outputs_activation.append(self.activation_func(result))
 
-        for i in range(self.n_layers):
+        for i in range(len(self.neurons)):
 
             result = self.hidden_outputs_activation[-1] @ self.weights[i + 1] + self.biases[i + 1]
 
