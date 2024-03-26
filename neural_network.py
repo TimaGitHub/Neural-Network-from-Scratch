@@ -5,6 +5,8 @@ from tqdm.auto import tqdm
 import numpy as np
 import matplotlib.pyplot as plt
 from IPython.display import clear_output
+import matplotlib
+matplotlib.use("TkAgg")
 
 class NeuralNetwork():
 
@@ -24,8 +26,9 @@ class NeuralNetwork():
 
         self.history_losses = []
 
+
     def prepare(self, gradient_method='gd', activation_func='sigmoid', alpha=0.1, seed=None,
-                loss_function='cross_entropy_loss', optimizer=False):
+                loss_function='cross_entropy_loss', optimizer=False,  momentum = 0):
 
         np.random.seed(seed)
 
@@ -68,6 +71,21 @@ class NeuralNetwork():
         else:
             raise Exception("gradient descent method is not specified or unknown")
 
+        if optimizer == 'momentum':
+            self.optimizer = 'momentum'
+            self.momentum = momentum
+
+        elif optimizer == 'accelerated_momentum':
+            self.optimizer = 'accelerated_momentum'
+            self.momentum = momentum
+
+        elif optimizer == False:
+            self.optimizer = None
+            self.momentum = 0
+
+        else:
+            raise Exception("Optimizer is not specified or unknown")
+
     def cosmetic(self, progress_bar=False, loss_display=False, loss_graphic = False, iterations=0):
 
         self.loss_display = loss_display
@@ -79,7 +97,7 @@ class NeuralNetwork():
             def tqdm_False(x, **params__):
                 return x
 
-            self.tqdm = NeuralNetwork.tqdm_False
+            self.tqdm = tqdm_False
         else:
             self.tqdm = tqdm
 
@@ -122,14 +140,11 @@ class NeuralNetwork():
 
                     self.trained = True
 
-                for epoch in tqdm(range(n_epochs), position=0, leave=True):
+                for epoch in self.tqdm(range(n_epochs), position=0, leave=True):
 
                     for index, batch in enumerate(batches):
 
                         x_train, y_train = batch
-
-                        norm = x_train.shape[0]
-
                         # collect outputs from different layers for back propagation
                         self.hidden_outputs_no_activation = []
                         self.hidden_outputs_activation = []
@@ -154,56 +169,79 @@ class NeuralNetwork():
                         pop_garbage = self.hidden_outputs_activation.pop()
 
                         output = functions.softmax(result)
-
                         self.hidden_outputs_activation.append(output)
 
                         loss = self.loss_func(output, y_train)
-
                         self.gradient_method(self, output, y_train)
 
                         #if self.loss_display and epoch % int(self.n_epochs / self.iterations) == 0:
                         if self.loss_display and index % 100 == 0:
                             val_acc = []
+                            count = 0
+                            norm = 0
                             for batch in test_batches:
-
                                 x_train, y_train = batch
                                 val_acc.append(metrics.accuracy(self.predict(x_train), np.int_(np.arange(0, 10) == y_train)))
+
 
                             print('For epoch number: {}, validation accuracy is: {}, loss is {}'.format(epoch, round(
                                 np.mean(val_acc), 4), round(np.mean(loss), 4)))
 
-                            # print('For iter number: {}, validation accuracy is: {}'.format(index, round(
-                            #      np.mean(val_acc), 4)))
+
                             self.history_losses.append(np.mean(loss))
                             self.history_scores.append(np.mean(val_acc))
                             if self.loss_graphic:
+                                pass
+                                #if you have noteboob run this
+                                # fig, ax1 = plt.subplots(figsize=(9, 8))
+                                #
+                                # clear_output(True)
+                                #
+                                # ax1.set_xlabel('iters')
+                                #
+                                # ax1.set_ylabel('Loss', color='blue')
+                                #
+                                # t = np.arange(len(self.history_losses))
+                                #
+                                # ax1.plot(t, self.history_losses)
+                                #
+                                # ax2 = ax1.twinx()
+                                #
+                                # ax2.set_ylabel('Score', color='red')
+                                #
+                                # ax2.plot(t, self.history_scores, color='red')
+                                #
+                                # plt.locator_params(axis='y', nbins=40)
+                                #
+                                # fig.tight_layout()
+                                #
+                                # plt.show()
 
-                                self.history_losses.append(np.mean(loss))
-                                self.history_scores.append(np.mean(val_acc))
+                if self.loss_graphic:
+                #if you run in ide
+                    fig, ax1 = plt.subplots(figsize=(9, 8))
 
-                                fig, ax1 = plt.subplots(figsize=(9, 8))
+                    clear_output(True)
 
-                                clear_output(True)
+                    ax1.set_xlabel('iters')
 
-                                ax1.set_xlabel('iters')
+                    ax1.set_ylabel('Loss', color='blue')
 
-                                ax1.set_ylabel('Loss', color='blue')
+                    t = np.arange(len(self.history_losses))
 
-                                t = np.arange(len(self.history_losses))
+                    ax1.plot(t, self.history_losses)
 
-                                ax1.plot(t, self.history_losses)
+                    ax2 = ax1.twinx()
 
-                                ax2 = ax1.twinx()
+                    ax2.set_ylabel('Score', color='red')
 
-                                ax2.set_ylabel('Score', color='red')
+                    ax2.plot(t, self.history_scores, color='red')
 
-                                ax2.plot(t, self.history_scores, color='red')
+                    plt.locator_params(axis='y', nbins=40)
 
-                                plt.locator_params(axis='y', nbins=40)
+                    fig.tight_layout()
 
-                                fig.tight_layout()
-
-                                plt.show()
+                    plt.show()
 
 
 
