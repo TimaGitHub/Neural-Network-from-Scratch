@@ -25,7 +25,7 @@ However, be careful when you increase the number of layers and neurons, as due t
 
 ## Neural Net Architecture
 ```python
- (784 , [50, 200, 20] , 10)
+ (784 , [50, 200, 50] , 10)
  ```
  ![nn graph](https://github.com/TimaGitHub/NeuralNetwork-from-Scratch/assets/70072941/1b1e2350-11f0-4103-b2a6-95a6348320f9)
 
