@@ -87,7 +87,7 @@ test.load('model_params.npy')
 
 ## Supplementary materials
 
-- very clear [explanation](https://colab.research.google.com/drive/1I-yxouAvKTOifFVfuaDYIS2x8LNiMQN4?usp=sharing#scrollTo=OQ7yPMeZjd9K) of how neural network are made
+- very clear [explanation](https://colab.research.google.com/drive/1I-yxouAvKTOifFVfuaDYIS2x8LNiMQN4?usp=sharing#scrollTo=OQ7yPMeZjd9K) of how neural network is made
 - nice 3Blue1Brown [videos](https://youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi&si=vZ3tJjTqXa9iSfBE)
 - very cool [network](https://www.youtube.com/watch?v=hfMk-kjRv4c&t=2708s&pp=ygUYbmV1cmFsIG5ldHdvcmsgc2VsZiBtYWRl) made from scratch by Sebastian Lague
 
