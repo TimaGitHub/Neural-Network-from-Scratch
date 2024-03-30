@@ -48,7 +48,7 @@ test.load('model_params.npy')
 
 - **functions.py**
  
-   contains most popular activations functions: sigmoid, tanh, relu, leaky relu, cross-entropy loss function, softmax function
+   contains most popular activation functions: sigmoid, tanh, relu, leaky relu, cross-entropy loss function, softmax function
 
 - **gradient_steps.py**
 
