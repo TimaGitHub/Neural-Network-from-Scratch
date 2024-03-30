@@ -29,8 +29,11 @@ However, be careful when you increase the number of layers and neurons, as due t
  ```
  ![nn graph](https://github.com/TimaGitHub/NeuralNetwork-from-Scratch/assets/70072941/1b1e2350-11f0-4103-b2a6-95a6348320f9)
 
- ### Progress_bar and loss_display
+ ### progress_bar and loss_display
  ![gh1](https://github.com/TimaGitHub/NeuralNetwork-from-Scratch/assets/70072941/d4484b22-655b-437a-a53f-897ebad3b8f2)
+
+ ### loss_graphic
+ ![gh3](https://github.com/TimaGitHub/NeuralNetwork-from-Scratch/assets/70072941/14317df1-68cf-4086-b107-e79e9dbbf55e)
 
  You can also save your model and download it's parameters next time.
  ```python
@@ -67,7 +70,7 @@ test.load('model_params.npy')
 - open **draw_digit.py**
 - train your model
 - draw a digit in a Tkinter GUI window
-- make predicition
+- make prediction
   
   ![gh2](https://github.com/TimaGitHub/NeuralNetwork-from-Scratch/assets/70072941/606d6c19-da9c-41bf-9647-3eea56f27295)
 
@@ -84,7 +87,7 @@ test.load('model_params.npy')
 
 ## Supplementary materials
 
-- very clear [explanation](https://colab.research.google.com/drive/1I-yxouAvKTOifFVfuaDYIS2x8LNiMQN4?usp=sharing#scrollTo=OQ7yPMeZjd9K) of how neural network really works (How It's Made - like)
+- very clear [explanation](https://colab.research.google.com/drive/1I-yxouAvKTOifFVfuaDYIS2x8LNiMQN4?usp=sharing#scrollTo=OQ7yPMeZjd9K) of how neural network is made inside
 - nice 3Blue1Brown [videos](https://youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi&si=vZ3tJjTqXa9iSfBE)
 - very cool [network](https://www.youtube.com/watch?v=hfMk-kjRv4c&t=2708s&pp=ygUYbmV1cmFsIG5ldHdvcmsgc2VsZiBtYWRl) made from scratch by Sebastian Lague
 
