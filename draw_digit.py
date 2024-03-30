@@ -35,14 +35,14 @@ train_batches = DataBatcher(train_data, 64, True)
 
 test = NeuralNetwork(784 , [50, 200, 20] , 10,  'classification', batches = True)
 
-test.prepare(gradient_method = 'gd', activation_func = 'leaky_relu', seed = None, alpha = 0.1, loss_function = 'cross_entropy_loss', optimizer = 'accelerated_momentum', momentum = 0.4)
+test.prepare(gradient_method = 'gd', activation_func = 'leaky_relu', seed = None, alpha = 0.1, loss_function = 'cross_entropy_loss', val_metric = 'accuracy', optimizer = 'accelerated_momentum', momentum = 0.4)
 
 test.cosmetic(progress_bar = False, loss_display = True, loss_graphic = False,  iterations = 10)
 
 test.train(train_batches, test_batches, 15)
 
 test.prepare(gradient_method='gd', activation_func='leaky_relu', seed=42, alpha=0.01,
-             loss_function='cross_entropy_loss', optimizer='accelerated_momentum', momentum=0.4)
+             loss_function='cross_entropy_loss', val_metric = 'accuracy', optimizer='accelerated_momentum', momentum=0.4)
 
 test.cosmetic(progress_bar=False, loss_display=True, loss_graphic=False, iterations=10)
 

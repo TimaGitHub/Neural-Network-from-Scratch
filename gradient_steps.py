@@ -4,18 +4,17 @@ def gradient_descent(self, output, y_train):
 
     if self == None:
         raise Exception("No object in gradient descent")
-
     else:
         changes_w = []
         changes_b = []
 
+        '''
+        art - variable that stores gradient for every layer (step)
+        it makes chain rule algorithm more straightforward to understand and implement
+        you can easily check validity by calculating gradient descent on a piece of paper in a general form.
+        '''
+
         art = self.loss_derivative(output, y_train)
-
-        if self.optimizer == 'accelerated_momentum':
-
-            for i in range(len(changes_w)):
-                self.weights[-2 - i] = self.weights[-2 - i] + self.last_grad_w[i] * self.momentum
-                self.biases[-1 - i] = self.biases[-1 - i] + self.last_grad_b[i] * self.momentum
 
         for i in range(len(self.neurons) + 1):
             if i == 0:
@@ -23,21 +22,32 @@ def gradient_descent(self, output, y_train):
             else:
                 art = (art @ (self.weights[-1 - i]).T) * self.derivative(self.hidden_outputs_no_activation[-1 - i])
 
-            # add l2-regularization
-            # changes_w.append(self.alpha * ( ((self.hidden_outputs_activation[-2 - i]).T @ art) / y_train.shape[0] + 0.5 * np.linalg.norm(self.weights[- 2 - i]) / y_train.shape[0] ) )
             changes_w.append(self.alpha * ((self.hidden_outputs_activation[-2 - i]).T @ art) / y_train.shape[0])
             changes_b.append(self.alpha * (np.sum(art) / y_train.shape[0]))
 
         for i in range(len(changes_w)):
+
+            # this is done for gradient descent algorithm called: "momentum"
             self.last_grad_w[i] = - changes_w[i] + self.momentum * self.last_grad_w[i]
             self.last_grad_b[i] = - changes_b[i] + self.momentum * self.last_grad_b[i]
 
 
+            # updating weights and biases
             self.weights[-2 - i] = self.weights[-2 - i] + self.last_grad_w[i]
             self.biases[-1 - i] = self.biases[-1 - i] + self.last_grad_b[i]
 
+        try:
+            if (np.isnan(self.weights[-2]).sum()) > 0:
+                raise NaNException
 
-def stochastic_gradient_descent__(self, output, y_train):
+        # this exception occurs if the training process has been broken down and the model is no longer being trained
+        except NaNException:
+            print("Training process failed, please decrease alpha parameter!")
+            raise NaNException
+
+
+
+def stochastic_gradient_descent(self, output, y_train):
     if self == None:
         raise Exception("No object in gradient descent")
     else:
@@ -63,7 +73,17 @@ def stochastic_gradient_descent__(self, output, y_train):
             self.weights[-2 - i] = self.weights[-2 - i] - changes_w[i]
             self.biases[-1 - i] = self.biases[-1 - i] - changes_b[i]
 
-def stochastic_average_gradient_descent__(self, output, y_train):
+        try:
+            if (np.isnan(self.weights[-2]).sum()) > 0:
+                raise NaNException
+
+
+        except NaNException:
+            print("Training process failed, please decrease alpha parameter!")
+            raise NaNException
+
+
+def stochastic_average_gradient_descent(self, output, y_train):
     if self == None:
         raise Exception("No object in gradient descent")
     else:
@@ -90,3 +110,15 @@ def stochastic_average_gradient_descent__(self, output, y_train):
         for i in range(len(changes_w)):
             self.weights[-2 - i] = self.weights[-2 - i] - changes_w[i]
             self.biases[-1 - i] = self.biases[-1 - i] - changes_b[i]
+
+        try:
+            if (np.isnan(self.weights[-2]).sum()) > 0:
+                raise NaNException
+
+        except NaNException:
+            print("Training process failed, please decrease alpha parameter!")
+            raise NaNException
+
+class NaNException(Exception):
+    "Training process failed, please decrease alpha parameter!"
+    pass

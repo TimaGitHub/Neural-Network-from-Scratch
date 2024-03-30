@@ -7,7 +7,6 @@ from neural_network import NeuralNetwork
 if __name__ == '__main__':
 
     data = pd.read_csv('train.csv')
-
     data = np.array(data)
     data = data.astype(float)
     np.random.shuffle(data)
@@ -21,18 +20,17 @@ if __name__ == '__main__':
 
     test = NeuralNetwork(784 , [50, 200, 20] , 10,  'classification', batches = True)
 
-    test.prepare(gradient_method = 'gd', activation_func = 'leaky_relu', seed = 42, alpha = 0.1, loss_function = 'cross_entropy_loss', optimizer = 'accelerated_momentum', momentum = 0.4)
+    test.prepare(gradient_method = 'gd', activation_func = 'leaky_relu', seed = None, alpha = 0.01, loss_function = 'cross_entropy_loss', val_metric = 'accuracy',  optimizer = 'accelerated_momentum', momentum = 0.9)
 
-    test.cosmetic(progress_bar = False, loss_display = True, loss_graphic = False,  iterations = 10)
+    test.cosmetic(progress_bar = False, loss_display = True, loss_graphic = False,  iterations = 100)
 
     test.train(train_batches, test_batches, 3)
 
-    test.prepare(gradient_method='gd', activation_func='leaky_relu', seed=42, alpha=0.01,
-                 loss_function='cross_entropy_loss', optimizer='accelerated_momentum', momentum=0.4)
+    test.prepare(gradient_method='gd', activation_func='leaky_relu', seed = None, alpha=0.001,
+                 loss_function='cross_entropy_loss', val_metric = 'accuracy', optimizer='accelerated_momentum', momentum=0.9)
 
-    test.cosmetic(progress_bar=False, loss_display=True, loss_graphic=False, iterations=10)
-
-
-
+    test.cosmetic(progress_bar=False, loss_display=True, loss_graphic=True, iterations=100)
 
     test.train(train_batches, test_batches, 5)
+
+    test.save(path = 'model_params.npy')

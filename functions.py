@@ -42,3 +42,24 @@ def softmax(z):
     else:
         return np.exp(z) / np.sum(np.exp(z), axis=1).reshape(-1, 1)
 
+def get_func(func_):
+    if func_ == 'sigmoid':
+        return sigmoid, derivative_sigmoid
+
+    elif func_ == 'relu':
+        return relu, derivative_relu
+
+    elif func_ == 'leaky_relu':
+        return leaky_relu, derivative_leaky_relu
+
+    elif func_ == 'tanh':
+        return tanh, derivative_tanh
+
+    else:
+        raise Exception("Activation function is not specified or unknown")
+
+def get_loss_func(func_):
+    if func_ == 'cross_entropy_loss':
+        return cross_entropy_loss, cross_entropy_loss_derivative
+    else:
+        raise Exception("Loss function is not specified or unknown")
