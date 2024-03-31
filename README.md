@@ -80,6 +80,7 @@ test.load('model_params.npy')
 - [ ] expand neural network for regression puprose
 - [ ] add L1, L2 regularization
 - [ ] make it more robust for large number of layers and neurons
+- [ ] add Batch Normalization
 - [ ] add optimizers ( RMSProp, Adam etc.)
 - [ ] make class more pytorch-like
 - [ ] win Kaggle competition with self-made neural network :sunglasses:
