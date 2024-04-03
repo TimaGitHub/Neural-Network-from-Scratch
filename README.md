@@ -77,12 +77,12 @@ test.load('model_params.npy')
 
 
 ## To-Do List
-- [ ] expand neural network for regression puprose
-- [ ] add L1, L2 regularization
-- [ ] make it more robust for large number of layers and neurons
-- [ ] add Batch Normalization
-- [ ] add optimizers ( RMSProp, Adam etc.)
-- [ ] make class more pytorch-like
+- [X] expand neural network for regression puprose (look for new project - PyCandle)
+- [X] add L1, L2 regularization (look for new project - PyCandle)
+- [X] make it more robust for large number of layers and neurons (look for new project - PyCandle)
+- [X] add Batch Normalization (look for new project - PyCandle)
+- [X] add optimizers ( RMSProp, Adam etc.) (look for new project - PyCandle)
+- [X] make class more pytorch-like (look for new project - PyCandle)
 - [ ] win Kaggle competition with self-made neural network :sunglasses:
 
 
