@@ -58,7 +58,7 @@ test.load('model_params.npy')
 
     provides data augmentation for digit images (rotate, resize, noise etc.)
 
-    ![image](https://i.stack.imgur.com/EaKBb.png)
+    ![image](https://i.sstatic.net/EaKBb.png)
 
 - **neural_network.py**
 
